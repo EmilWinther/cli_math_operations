@@ -79,3 +79,50 @@ fn main() {
         (_, Err(_)) => println!("Error: Operand2 is not a valid number."),
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_operand_valid() {
+        assert_eq!(parse_operand("5.2").unwrap(), 5.2);
+        assert_eq!(parse_operand("-3.0").unwrap(), -3.0);
+    }
+
+    #[test]
+    fn test_parse_operand_invalid() {
+        assert!(parse_operand("abc").is_err());
+    }
+
+    #[test]
+    fn test_perform_operation_add() {
+        let result = perform_operation(Operation::Add, 5.0, 3.0);
+        assert_eq!(result.unwrap(), 8.0);
+    }
+
+    #[test]
+    fn test_perform_operation_subtract() {
+        let result = perform_operation(Operation::Subtract, 5.0, 3.0);
+        assert_eq!(result.unwrap(), 2.0);
+    }
+
+    #[test]
+    fn test_perform_operation_multiply() {
+        let result = perform_operation(Operation::Multiply, 5.0, 3.0);
+        assert_eq!(result.unwrap(), 15.0);
+    }
+
+    #[test]
+    fn test_perform_operation_divide() {
+        let result = perform_operation(Operation::Divide, 6.0, 3.0);
+        assert_eq!(result.unwrap(), 2.0);
+    }
+
+    #[test]
+    fn test_perform_operation_divide_by_zero() {
+        let result = perform_operation(Operation::Divide, 5.0, 0.0);
+        assert_eq!(result.err().unwrap(), "Division by zero is not allowed.");
+    }
+}

@@ -27,6 +27,7 @@ test_build() {
 }
 
 run_tests() {
+  echo "Running tests"
   TEST_OUTPUT=$(cargo test 2>&1)
   echo "$TEST_OUTPUT"
   
@@ -35,7 +36,21 @@ run_tests() {
   
   echo "Tests Passed: $PASSED_TESTS"
   echo "Tests Failed: $FAILED_TESTS"
+
+  echo "Running test with code coverage"
+  TESTS_WITH_COVERAGE=$(RUSTFLAGS="-C instrument-coverage" LLVM_PROFILE_FILE="calc-%p-%m.profraw" cargo +nightly test)
+
+  echo "Generating Coverage report.."
+  COVERAGE_REPORT=$(grcov . --binary-path ./target/debug/ -s . -t html --branch --ignore-not-existing -o ./target/debug/coverage/)
+  echo "Coverage report done, check target folder."
+
+  # Ask the user if they want to open the coverage report
+  read -p "Do you want to open the coverage report in the default browser? (y/n): " choice
+  if [ "$choice" = "y" ] || [ "$choice" = "Y" ]; then
+    ./open_report.sh
+  fi
 }
+
 
 if [ "$1" == "-tb" ]; then
     run_tests

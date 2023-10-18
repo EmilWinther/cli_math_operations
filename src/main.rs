@@ -30,7 +30,7 @@ fn perform_operation(operation: Operation, operand1: f64, operand2: f64) -> Resu
 }
 
 fn main() {
-    let matches = App::new("exedee")
+    let matches = App::new("calc")
         .version("1.0")
         .author("Your Name")
         .about("A custom command-line app for mathematical operations")

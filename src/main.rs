@@ -10,18 +10,30 @@ enum Operation {
     Divide,
 }
 
-fn parse_operand(s: &str) -> Result<f64, ParseFloatError> {
-    s.parse()
+#[derive(Debug)]
+enum CalcError {
+    OperandParseError(String),
+    DivisionByZero,
 }
 
-fn perform_operation(operation: Operation, operand1: f64, operand2: f64) -> Result<f64, &'static str> {
+impl From<ParseFloatError> for CalcError {
+    fn from(_: ParseFloatError) -> Self {
+        CalcError::OperandParseError("Failed to parse operand".to_string())
+    }
+}
+
+fn parse_operand(s: &str) -> Result<f64, CalcError> {
+    s.parse().map_err(|e: ParseFloatError| e.into())
+}
+
+fn perform_operation(operation: Operation, operand1: f64, operand2: f64) -> Result<f64, CalcError> {
     match operation {
         Operation::Add => Ok(operand1 + operand2),
         Operation::Subtract => Ok(operand1 - operand2),
         Operation::Multiply => Ok(operand1 * operand2),
         Operation::Divide => {
             if operand2 == 0.0 {
-                Err("Division by zero is not allowed.")
+                Err(CalcError::DivisionByZero)
             } else {
                 Ok(operand1 / operand2)
             }
@@ -29,7 +41,7 @@ fn perform_operation(operation: Operation, operand1: f64, operand2: f64) -> Resu
     }
 }
 
-fn main() {
+fn main() -> Result<(), CalcError> {
     let matches = App::new("calc")
         .version("1.0.1")
         .author("Emil winther")
@@ -65,18 +77,22 @@ fn main() {
         _ => unreachable!(), // clap ensures only valid values
     };
 
-    let operand1_str = matches.value_of("operand1").unwrap();
-    let operand2_str = matches.value_of("operand2").unwrap();
+    let operand1 = parse_operand(matches.value_of("operand1").unwrap())?;
+    let operand2 = parse_operand(matches.value_of("operand2").unwrap())?;
 
-    match (parse_operand(operand1_str), parse_operand(operand2_str)) {
-        (Ok(operand1), Ok(operand2)) => {
-            match perform_operation(operation, operand1, operand2) {
-                Ok(result) => println!("Result: {}", result),
-                Err(err) => println!("Error: {}", err),
-            }
+    match perform_operation(operation, operand1, operand2) {
+        Ok(result) => {
+            println!("Result: {}", result);
+            Ok(())
         }
-        (Err(_), _) => println!("Error: Operand1 is not a valid number."),
-        (_, Err(_)) => println!("Error: Operand2 is not a valid number."),
+        Err(CalcError::OperandParseError(err)) => {
+            println!("Error: {}", err);
+            Err(CalcError::OperandParseError(err.to_string()))
+        }
+        Err(CalcError::DivisionByZero) => {
+            println!("Error: Division by zero is not allowed.");
+            Err(CalcError::DivisionByZero)
+        }
     }
 }
 
@@ -123,6 +139,11 @@ mod tests {
     #[test]
     fn test_perform_operation_divide_by_zero() {
         let result = perform_operation(Operation::Divide, 5.0, 0.0);
-        assert_eq!(result.err().unwrap(), "Division by zero is not allowed.");
+    
+        match result {
+            Err(CalcError::DivisionByZero) => assert!(true),
+            _ => assert!(false, "Expected a DivisionByZero error."),
+        }
     }
+    
 }

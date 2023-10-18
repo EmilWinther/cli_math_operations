@@ -6,7 +6,9 @@ Features
     Supports four basic mathematical operations: addition, subtraction, multiplication, and division.
     Built with Rust and utilizes the clap crate for argument parsing.
     Provides clear error messages for invalid inputs and operations.
+Prerequisites:
 
+Before proceeding with the installation, ensure that you have both Rust and Cargo installed on your machine. If not, you can install them using the provided link.
 Installation
 
     Ensure you have Rust and Cargo installed on your machine.

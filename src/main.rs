@@ -92,7 +92,7 @@ fn perform_operation(operation: Operation, operand1: f64, operand2: Option<f64>)
 
 fn main() -> Result<(), CalcError> {
     let matches = App::new("calc")
-        .version("1.0.1")
+        .version("1.1.1")
         .author("Emil winther")
         .about("A custom command-line app for mathematical operations")
         .arg(

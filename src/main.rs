@@ -193,6 +193,22 @@ mod tests {
         let result = perform_operation(Operation::Divide, 6.0, Some(3.0));
         assert_eq!(result.unwrap(), 2.0);
     }
+    #[test]
+    fn test_perform_operation_power() {
+        let result = perform_operation(Operation::Power, 2.0, Some(2.0));
+        assert_eq!(result.unwrap(), 4.0);
+    }
+    
+    #[test]
+    fn test_perform_operation_sqrt() {
+        let result = perform_operation(Operation::Sqrt, 25.0, None).unwrap();
+        assert!((result - 5.0).abs() < f64::EPSILON);
+    }
+    #[test]
+    fn perform_operation_modulo() {
+        let result = perform_operation(Operation::Modulo, 21.0, Some(100.0));
+        assert_eq!(result.unwrap(), 21.0);
+    }
 
     #[test]
     fn test_perform_operation_divide_by_zero() {

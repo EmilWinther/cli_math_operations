@@ -16,7 +16,14 @@ test_build() {
   fi
   
   echo "Testing command..."
+  echo "Addition:"
   calc -o add 3 3
+  echo "Subtract:"
+  calc -o subtract 3 3
+  echo "Multiply:"
+  calc -o multiply 3 3
+  echo "Divide:"
+  calc -o divide 3 3
 }
 
 run_tests() {
